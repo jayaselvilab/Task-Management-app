@@ -1,67 +1,93 @@
 const Task = require('../models/Task');
+const { Sequelize } = require('sequelize');
 
-// This function creates a new task
+// 1. Create a task (Linked to the logged-in user)
 exports.createTask = async (req, res) => {
   try {
-    const { title, description, UserId } = req.body;
+    const { title, description, status, priority } = req.body;
 
     const newTask = await Task.create({
       title,
       description,
-      UserId // We link it to the user who created it
+      status: status || 'Pending',
+      priority: priority || 'Medium',
+      UserId: req.user.id // Taken from the Auth Middleware
     });
 
-    res.status(201).json({
-      message: "Task created successfully!",
-      task: newTask
-    });
+    res.status(201).json(newTask);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-// This function gets all tasks from the database
+// 2. Get ONLY the tasks for the logged-in user
 exports.getTasks = async (req, res) => {
   try {
-    const tasks = await Task.findAll();
+    const tasks = await Task.findAll({ 
+      where: { UserId: req.user.id },
+      order: [['createdAt', 'DESC']] // Newest tasks first
+    });
     res.status(200).json(tasks);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// This function deletes a specific task by its ID
+// 3. Update task status or priority
+exports.updateTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, status, priority } = req.body;
+
+    const task = await Task.findOne({ where: { id, UserId: req.user.id } });
+
+    if (!task) {
+      return res.status(404).json({ message: "Task not found or unauthorized" });
+    }
+
+    // Update fields
+    task.title = title || task.title;
+    task.description = description || task.description;
+    task.status = status || task.status;
+    task.priority = priority || task.priority;
+
+    await task.save();
+    res.status(200).json(task);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// 4. Delete a specific task
 exports.deleteTask = async (req, res) => {
   try {
-    const { id } = req.params; // Get the ID from the URL
-    await Task.destroy({ where: { id } });
+    const { id } = req.params;
+    const deleted = await Task.destroy({ where: { id, UserId: req.user.id } });
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
     res.status(200).json({ message: "Task deleted successfully!" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-
-
-
-// This function updates a task (e.g., marking it as completed)
-exports.updateTask = async (req, res) => {
+// 5. GET CHART DATA (New method for Pie Chart)
+// This groups tasks by status and returns the count for each
+exports.getTaskSummary = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { title, description, completed } = req.body;
+    const summary = await Task.findAll({
+      where: { UserId: req.user.id },
+      attributes: [
+        'status',
+        [Sequelize.fn('COUNT', Sequelize.col('status')), 'count']
+      ],
+      group: ['status']
+    });
 
-    const task = await Task.findByPk(id);
-    if (!task) {
-      return res.status(404).json({ message: "Task not found" });
-    }
-
-    // Update the fields
-    task.title = title || task.title;
-    task.description = description || task.description;
-    task.completed = completed !== undefined ? completed : task.completed;
-
-    await task.save();
-    res.status(200).json({ message: "Task updated successfully!", task });
+    res.status(200).json(summary);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

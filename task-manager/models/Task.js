@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const User = require('./User'); // Import User to create a relationship
+const User = require('./User');
 
 const Task = sequelize.define('Task', {
   title: {
@@ -11,13 +11,19 @@ const Task = sequelize.define('Task', {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  completed: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
+  // 1. UPDATED: Changed from Boolean 'completed' to ENUM 'status'
+  status: {
+    type: DataTypes.ENUM('Pending', 'In Progress', 'Completed'),
+    defaultValue: 'Pending'
+  },
+  // 2. ADDED: Added priority level
+  priority: {
+    type: DataTypes.ENUM('Low', 'Medium', 'High'),
+    defaultValue: 'Medium'
   }
 });
 
-// Create the Relationship (One User has Many Tasks)
+// Relationships
 User.hasMany(Task, { onDelete: 'CASCADE' });
 Task.belongsTo(User);
 
