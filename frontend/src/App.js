@@ -158,4 +158,4 @@ function App() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full bg-stone-50 border border
+              className="w-full bg-stone-50 border border"
