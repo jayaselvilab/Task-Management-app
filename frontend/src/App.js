@@ -1,3 +1,4 @@
+cat << 'EOF' > src/App.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';
@@ -84,7 +85,6 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
       <div className="bg-white/90 backdrop-blur-xl border border-stone-200/80 p-10 rounded-3xl shadow-2xl w-full max-w-lg">
-        
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold text-indigo-950 tracking-tight">Task Manager</h1>
           <p className="text-stone-500 text-sm mt-1">Organize your daily workflow seamlessly</p>
@@ -168,10 +168,10 @@ function App() {
             {isLogin ? 'Sign In to Dashboard' : 'Complete Registration'}
           </button>
         </form>
-
       </div>
     </div>
   );
 }
 
 export default App;
+EOF
