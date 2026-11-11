@@ -45,7 +45,11 @@ function App() {
         setPassword('');
       }
     } catch (err) {
-      setError(err.response?.data?.error || err.response?.data?.message || 'Authentication failed. Please check your details.');
+      setError(
+        err.response?.data?.error || 
+        err.response?.data?.message || 
+        'Authentication failed. Please check your details.'
+      );
     }
   };
 
@@ -59,12 +63,14 @@ function App() {
     setUsername('');
   };
 
-  // Logged in dashboard view
+  // Logged in view
   if (userToken) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-stone-100 flex items-center justify-center p-4">
         <div className="bg-white p-10 rounded-3xl shadow-xl w-full max-w-lg text-center border border-stone-200">
-          <h1 className="text-3xl font-bold text-stone-800 mb-3">Welcome back, {loggedInUser}! ✨</h1>
+          <h1 className="text-3xl font-bold text-stone-800 mb-3">
+            Welcome back, {loggedInUser}!
+          </h1>
           <p className="text-stone-500 mb-8 text-base">Your task manager dashboard is ready to go.</p>
           <button
             onClick={handleLogout}
@@ -77,7 +83,7 @@ function App() {
     );
   }
 
-  // Medium-sized, centered Login / Register form with an attractive warm color scheme
+  // Medium-sized, centered Login / Register form
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
       <div className="bg-white/90 backdrop-blur-xl border border-stone-200/80 p-10 rounded-3xl shadow-2xl w-full max-w-lg">
@@ -158,4 +164,10 @@ function App() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full bg-stone-50 border border"
+              className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3.5 text-stone-800 placeholder-stone-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 text-sm transition"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold py-3.5
