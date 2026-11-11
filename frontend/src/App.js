@@ -39,7 +39,7 @@ function App() {
           password
         });
         
-        setSuccessMessage('Registration successful! Please log in.');
+        setSuccessMessage('Registration successful! Please sign in.');
         setIsLogin(true);
         setPassword('');
       }
@@ -47,7 +47,7 @@ function App() {
       setError(
         err.response?.data?.error || 
         err.response?.data?.message || 
-        'Authentication failed. Please check your details.'
+        'Authentication failed. Please check your credentials.'
       );
     }
   };
@@ -62,19 +62,22 @@ function App() {
     setUsername('');
   };
 
+  // Logged-in dashboard view
   if (userToken) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-stone-100 flex items-center justify-center p-4">
-        <div className="bg-white p-10 rounded-3xl shadow-xl w-full max-w-lg text-center border border-stone-200">
-          <h1 className="text-3xl font-bold text-stone-800 mb-3">
-            Welcome back, {loggedInUser}!
-          </h1>
-          <p className="text-stone-500 mb-8 text-base">Your task manager dashboard is ready to go.</p>
+      <div 
+        className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center relative"
+        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2000&auto=format&fit=crop')` }}
+      >
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+        <div className="bg-black/40 backdrop-blur-md border border-white/20 p-10 rounded-2xl shadow-2xl w-full max-w-md text-center text-white relative z-10">
+          <h1 className="text-3xl font-bold mb-3">Welcome back, {loggedInUser}!</h1>
+          <p className="text-gray-300 mb-8 text-sm">Your task manager dashboard is ready.</p>
           <button
             onClick={handleLogout}
-            className="w-full bg-rose-500 hover:bg-rose-600 text-white font-medium py-3 rounded-xl transition duration-200 shadow-md shadow-rose-500/20 text-base"
+            className="w-full bg-white text-slate-900 font-semibold py-3 rounded-xl hover:bg-gray-100 transition shadow-lg text-sm"
           >
-            Logout
+            Sign Out
           </button>
         </div>
       </div>
@@ -82,91 +85,111 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
-      <div className="bg-white/90 backdrop-blur-xl border border-stone-200/80 p-10 rounded-3xl shadow-2xl w-full max-w-lg">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-extrabold text-indigo-950 tracking-tight">Task Manager</h1>
-          <p className="text-stone-500 text-sm mt-1">Organize your daily workflow seamlessly</p>
-        </div>
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center relative"
+      style={{ backgroundImage: `url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2000&auto=format&fit=crop')` }}
+    >
+      {/* Dark overlay for contrast */}
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
 
-        <div className="flex bg-stone-100 p-1.5 rounded-2xl mb-8 border border-stone-200/60">
-          <button
-            type="button"
-            onClick={() => { setIsLogin(true); setError(''); setSuccessMessage(''); }}
-            className={`flex-1 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${
-              isLogin ? 'bg-indigo-600 text-white shadow-md' : 'text-stone-600 hover:text-indigo-950'
-            }`}
-          >
-            Sign In
-          </button>
-          <button
-            type="button"
-            onClick={() => { setIsLogin(false); setError(''); setSuccessMessage(''); }}
-            className={`flex-1 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${
-              !isLogin ? 'bg-indigo-600 text-white shadow-md' : 'text-stone-600 hover:text-indigo-950'
-            }`}
-          >
-            Create Account
-          </button>
-        </div>
+      {/* Glassmorphic Card */}
+      <div className="bg-black/35 backdrop-blur-md border border-white/20 p-8 sm:p-10 rounded-2xl shadow-2xl w-full max-w-md text-white relative z-10">
+        
+        <h2 className="text-3xl font-semibold text-center mb-8 tracking-wide">
+          {isLogin ? 'Login' : 'Create Account'}
+        </h2>
 
+        {/* Error / Success Messages */}
         {error && (
-          <div className="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-600 text-sm rounded-xl font-medium">
+          <div className="mb-4 p-3 bg-red-500/20 border border-red-500/40 text-red-200 text-xs rounded-lg">
             {error}
           </div>
         )}
         {successMessage && (
-          <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm rounded-xl font-medium">
+          <div className="mb-4 p-3 bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 text-xs rounded-lg">
             {successMessage}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {!isLogin && (
             <div>
-              <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-2">Username</label>
               <input
                 type="text"
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter your name"
-                className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3.5 text-stone-800 placeholder-stone-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 text-sm transition"
+                placeholder="Enter your username"
+                className="w-full bg-transparent border-b border-white/40 pb-2 text-white placeholder-white/60 focus:outline-none focus:border-white text-sm transition"
               />
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-2">Email Address</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@example.com"
-              className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3.5 text-stone-800 placeholder-stone-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 text-sm transition"
+              placeholder="Enter your email"
+              className="w-full bg-transparent border-b border-white/40 pb-2 text-white placeholder-white/60 focus:outline-none focus:border-white text-sm transition"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-2">Password</label>
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3.5 text-stone-800 placeholder-stone-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 text-sm transition"
+              placeholder="Enter your password"
+              className="w-full bg-transparent border-b border-white/40 pb-2 text-white placeholder-white/60 focus:outline-none focus:border-white text-sm transition"
             />
           </div>
 
+          {isLogin && (
+            <div className="flex items-center justify-between text-xs text-gray-300 pt-1">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" className="rounded bg-transparent border-white/40 text-indigo-600 focus:ring-0" />
+                <span>Remember me</span>
+              </label>
+              <span className="hover:underline cursor-pointer">Forgot password?</span>
+            </div>
+          )}
+
           <button
             type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold py-3.5 rounded-xl transition duration-200 shadow-lg shadow-indigo-600/30 text-base mt-4"
+            className="w-full bg-white text-slate-900 font-semibold py-3 rounded-lg hover:bg-gray-100 transition shadow-lg text-sm mt-2"
           >
-            {isLogin ? 'Sign In to Dashboard' : 'Complete Registration'}
+            {isLogin ? 'Log In' : 'Register'}
           </button>
         </form>
+
+        {/* Toggle Mode Footer */}
+        <div className="text-center mt-6 text-xs text-gray-300">
+          {isLogin ? (
+            <p>
+              Don't have an account?{' '}
+              <button 
+                onClick={() => { setIsLogin(false); setError(''); setSuccessMessage(''); }} 
+                className="text-white font-medium hover:underline focus:outline-none"
+              >
+                Register
+              </button>
+            </p>
+          ) : (
+            <p>
+              Already have an account?{' '}
+              <button 
+                onClick={() => { setIsLogin(true); setError(''); setSuccessMessage(''); }} 
+                className="text-white font-medium hover:underline focus:outline-none"
+              >
+                Login
+              </button>
+            </p>
+          )}
+        </div>
+
       </div>
     </div>
   );
