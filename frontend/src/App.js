@@ -10,7 +10,7 @@ import { Pie } from 'react-chartjs-2';
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
 
 // Dynamic API URL for Local development vs Production (Vercel/Render)
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const API_URL = process.env.REACT_APP_API_URL || 'https://task-management-app-bams.onrender.com';
 
 function App() {
   const [tasks, setTasks] = useState([]);
