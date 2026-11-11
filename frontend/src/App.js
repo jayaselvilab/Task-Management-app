@@ -9,10 +9,13 @@ import { Pie } from 'react-chartjs-2';
 // 2. REGISTER CHART.JS COMPONENTS
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
 
+// Dynamic API URL for Local development vs Production (Vercel/Render)
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 function App() {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState('');
-  const [priority, setPriority] = useState('Medium'); // New state for priority
+  const [priority, setPriority] = useState('Medium');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   
@@ -34,7 +37,7 @@ function App() {
     if (!token || token === "undefined") return;
 
     try {
-      const response = await axios.get('http://localhost:5000/api/tasks', {
+      const response = await axios.get(`${API_URL}/api/tasks`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       setTasks(response.data);
@@ -80,7 +83,7 @@ function App() {
     const payload = isRegistering ? { username, email, password } : { email, password };
 
     try {
-      const res = await axios.post(`http://localhost:5000/api/auth/${endpoint}`, payload);
+      const res = await axios.post(`${API_URL}/api/auth/${endpoint}`, payload);
       
       if (isRegistering) {
         alert("Registration Successful! Please log in.");
@@ -108,7 +111,7 @@ function App() {
     if (!title) return;
     const token = localStorage.getItem('token');
     try {
-      await axios.post('http://localhost:5000/api/tasks', 
+      await axios.post(`${API_URL}/api/tasks`, 
         { title, status: 'Pending', priority }, 
         { headers: { 'Authorization': `Bearer ${token}` } }
       );
@@ -123,7 +126,7 @@ function App() {
   const updateStatus = async (id, newStatus) => {
     const token = localStorage.getItem('token');
     try {
-      await axios.put(`http://localhost:5000/api/tasks/${id}`, 
+      await axios.put(`${API_URL}/api/tasks/${id}`, 
         { status: newStatus }, 
         { headers: { 'Authorization': `Bearer ${token}` } }
       );
@@ -136,7 +139,7 @@ function App() {
   const deleteTask = async (id) => {
     const token = localStorage.getItem('token');
     try {
-      await axios.delete(`http://localhost:5000/api/tasks/${id}`, {
+      await axios.delete(`${API_URL}/api/tasks/${id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       fetchTasks();
