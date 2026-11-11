@@ -1,248 +1,180 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';
 
-// 1. IMPORT CHART.JS COMPONENTS
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from 'chart.js';
-import { Pie } from 'react-chartjs-2';
-
-// 2. REGISTER CHART.JS COMPONENTS
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
-
-// Dynamic API URL for Local development vs Production (Vercel/Render)
-const API_URL = process.env.REACT_APP_API_URL || 'https://task-management-app-bams.onrender.com';
+// Replace with your live Render backend URL
+const API_BASE_URL = 'https://task-management-app-bams.onrender.com/api';
 
 function App() {
-  const [tasks, setTasks] = useState([]);
-  const [title, setTitle] = useState('');
-  const [priority, setPriority] = useState('Medium');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isRegistering, setIsRegistering] = useState(false);
-  
+  const [isLogin, setIsLogin] = useState(true);
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [username, setUsername] = useState(''); 
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [userToken, setUserToken] = useState(localStorage.getItem('token') || '');
+  const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem('username') || '');
 
-  // 3. INITIAL TOKEN CHECK
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token && token !== "undefined") {
-      setIsLoggedIn(true);
-    }
-  }, []);
-
-  // 4. FETCH TASKS
-  const fetchTasks = useCallback(async (tokenOverride) => {
-    const token = tokenOverride || localStorage.getItem('token');
-    if (!token || token === "undefined") return;
-
-    try {
-      const response = await axios.get(`${API_URL}/api/tasks`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      setTasks(response.data);
-    } catch (err) {
-      console.error("Fetch Tasks Error:", err);
-      if (err.response?.status === 401) handleLogout();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      fetchTasks();
-    }
-  }, [isLoggedIn, fetchTasks]);
-
-  // 5. CHART DATA PROCESSING
-  const getChartData = () => {
-    const pending = tasks.filter(t => t.status === 'Pending').length;
-    const inProgress = tasks.filter(t => t.status === 'In Progress').length;
-    const completed = tasks.filter(t => t.status === 'Completed').length;
-
-    return {
-      labels: ['Pending', 'In Progress', 'Completed'],
-      datasets: [
-        {
-          label: 'Tasks',
-          data: [pending, inProgress, completed],
-          backgroundColor: [
-            '#FFCE56', // Yellow
-            '#36A2EB', // Blue
-            '#4BC0C0', // Green
-          ],
-          hoverOffset: 4
-        },
-      ],
-    };
-  };
-
-  // 6. AUTH LOGIC
-  const handleAuth = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = isRegistering ? 'register' : 'login';
-    const payload = isRegistering ? { username, email, password } : { email, password };
+    setError('');
+    setSuccessMessage('');
 
     try {
-      const res = await axios.post(`${API_URL}/api/auth/${endpoint}`, payload);
-      
-      if (isRegistering) {
-        alert("Registration Successful! Please log in.");
-        setIsRegistering(false); 
-        setPassword(''); 
+      if (isLogin) {
+        // Login Request
+        const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+          email: email.trim(),
+          password
+        });
+        
+        const { token, username: name } = response.data;
+        localStorage.setItem('token', token);
+        localStorage.setItem('username', name);
+        setUserToken(token);
+        setLoggedInUser(name);
+        setSuccessMessage('Login successful!');
       } else {
-        const token = res.data.token;
-        localStorage.setItem('token', token); 
-        setIsLoggedIn(true); 
-        fetchTasks(token); 
+        // Register Request
+        await axios.post(`${API_BASE_URL}/auth/register`, {
+          username: username.trim(),
+          email: email.trim(),
+          password
+        });
+        
+        setSuccessMessage('Registration successful! Please log in.');
+        setIsLogin(true);
+        setPassword('');
       }
     } catch (err) {
-      alert("Error: " + (err.response?.data?.error || "Auth failed"));
+      setError(err.response?.data?.error || err.response?.data?.message || 'Authentication failed. Please check your details.');
     }
   };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    setIsLoggedIn(false);
-    setTasks([]);
+    localStorage.removeItem('username');
+    setUserToken('');
+    setLoggedInUser('');
+    setEmail('');
+    setPassword('');
+    setUsername('');
   };
 
-  const addTask = async (e) => {
-    e.preventDefault();
-    if (!title) return;
-    const token = localStorage.getItem('token');
-    try {
-      await axios.post(`${API_URL}/api/tasks`, 
-        { title, status: 'Pending', priority }, 
-        { headers: { 'Authorization': `Bearer ${token}` } }
-      );
-      setTitle('');
-      setPriority('Medium');
-      fetchTasks();
-    } catch (err) {
-      console.error("Add Task Error", err);
-    }
-  };
-
-  const updateStatus = async (id, newStatus) => {
-    const token = localStorage.getItem('token');
-    try {
-      await axios.put(`${API_URL}/api/tasks/${id}`, 
-        { status: newStatus }, 
-        { headers: { 'Authorization': `Bearer ${token}` } }
-      );
-      fetchTasks();
-    } catch (err) {
-      console.error("Update Error", err);
-    }
-  };
-
-  const deleteTask = async (id) => {
-    const token = localStorage.getItem('token');
-    try {
-      await axios.delete(`${API_URL}/api/tasks/${id}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      fetchTasks();
-    } catch (err) {
-      console.error("Delete Error", err);
-    }
-  };
-
-  // --- RENDER LOGIN ---
-  if (!isLoggedIn) {
+  // If user is logged in, show a simple dashboard/task view
+  if (userToken) {
     return (
-      <div className="app-container">
-        <div className="card">
-          <h1>{isRegistering ? "Create Account" : "Login"}</h1>
-          <form onSubmit={handleAuth}>
-            {isRegistering && (
-              <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-            )}
-            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-            <button type="submit" className="add-btn">{isRegistering ? "Register" : "Sign In"}</button>
-          </form>
-          <p onClick={() => setIsRegistering(!isRegistering)} style={{ marginTop: '15px', cursor: 'pointer', color: '#007bff' }}>
-            {isRegistering ? "Back to Login" : "Need an account? Register"}
-          </p>
+      <div className="min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center p-4">
+        <div className="bg-slate-800 p-8 rounded-2xl shadow-xl w-full max-w-md text-center border border-slate-700">
+          <h1 className="text-3xl font-bold mb-2">Welcome back, {loggedInUser}! 🎉</h1>
+          <p className="text-slate-400 mb-6">Your task management dashboard is ready.</p>
+          <button
+            onClick={handleLogout}
+            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-xl transition duration-200 shadow-lg"
+          >
+            Logout
+          </button>
         </div>
       </div>
     );
   }
 
-  // --- RENDER TASK MANAGER ---
+  // Login / Register Form
   return (
-    <div className="app-container">
-      <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2>Dashboard</h2>
-          <button onClick={handleLogout} className="delete-btn" style={{padding: '5px 10px'}}>Logout</button>
-        </div>
-
-        {/* 7. DASHBOARD SECTION */}
-        <div style={{ margin: '20px 0', height: '220px', display: 'flex', justifyContent: 'center' }}>
-          {tasks.length > 0 ? (
-            <Pie 
-              data={getChartData()} 
-              options={{ 
-                maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom' } } 
-              }} 
-            />
-          ) : (
-            <p style={{ color: '#888', alignSelf: 'center' }}>No tasks found to chart.</p>
-          )}
-        </div>
-
-        <hr style={{ border: '0.5px solid #eee', margin: '20px 0' }} />
-
-        <form className="input-group" onSubmit={addTask} style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
-          <input 
-            style={{ flex: 2, minWidth: '150px' }}
-            value={title} 
-            onChange={(e) => setTitle(e.target.value)} 
-            placeholder="New task..." 
-          />
-          <select 
-            value={priority} 
-            onChange={(e) => setPriority(e.target.value)}
-            style={{ flex: 1, padding: '8px', borderRadius: '4px' }}
+    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
+      <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800 p-8 rounded-3xl shadow-2xl w-full max-w-md">
+        
+        {/* Header Tabs */}
+        <div className="flex bg-slate-800/60 p-1.5 rounded-2xl mb-8">
+          <button
+            type="button"
+            onClick={() => { setIsLogin(true); setError(''); setSuccessMessage(''); }}
+            className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 ${
+              isLogin ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+            }`}
           >
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-          </select>
-          <button type="submit" className="add-btn" style={{ flex: 1 }}>Add</button>
+            Login
+          </button>
+          <button
+            type="button"
+            onClick={() => { setIsLogin(false); setError(''); setSuccessMessage(''); }}
+            className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 ${
+              !isLogin ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            Register
+          </button>
+        </div>
+
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold text-white">
+            {isLogin ? 'Welcome Back' : 'Create Account'}
+          </h2>
+          <p className="text-sm text-slate-400 mt-1">
+            {isLogin ? 'Enter your credentials to access your tasks' : 'Sign up to start organizing your daily goals'}
+          </p>
+        </div>
+
+        {/* Error / Success Messages */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-xl">
+            {error}
+          </div>
+        )}
+        {successMessage && (
+          <div className="mb-4 p-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm rounded-xl">
+            {successMessage}
+          </div>
+        )}
+
+        {/* Form Fields */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {!isLogin && (
+            <div>
+              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Username</label>
+              <input
+                type="text"
+                required
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter your username"
+                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+              />
+            </div>
+          )}
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Email Address</label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="name@example.com"
+              className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Password</label>
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition duration-200 shadow-lg shadow-indigo-600/30 text-sm mt-2"
+          >
+            {isLogin ? 'Sign In' : 'Create Account'}
+          </button>
         </form>
 
-        <ul className="task-list" style={{ marginTop: '20px' }}>
-          {tasks.map(task => (
-            <li key={task.id} className="task-item" style={{ borderLeft: `5px solid ${task.priority === 'High' ? '#ff4d4d' : task.priority === 'Medium' ? '#ffa500' : '#4caf50'}` }}>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={{ 
-                  textDecoration: task.status === 'Completed' ? 'line-through' : 'none',
-                  fontWeight: 'bold'
-                }}>
-                  {task.title}
-                </span>
-                <small style={{ color: '#666' }}>Priority: {task.priority}</small>
-              </div>
-
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                <select 
-                  value={task.status} 
-                  onChange={(e) => updateStatus(task.id, e.target.value)}
-                  style={{ fontSize: '12px', padding: '4px' }}
-                >
-                  <option value="Pending">Pending</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Completed">Completed</option>
-                </select>
-                <button className="delete-btn" onClick={() => deleteTask(task.id)} style={{ padding: '5px' }}>✕</button>
-              </div>
-            </li>
-          ))}
-        </ul>
       </div>
     </div>
   );
