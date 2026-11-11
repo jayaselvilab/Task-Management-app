@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';
 
-// Replace with your live Render backend URL
+// Live Render backend URL
 const API_BASE_URL = 'https://task-management-app-bams.onrender.com/api';
 
 function App() {
@@ -22,7 +22,6 @@ function App() {
 
     try {
       if (isLogin) {
-        // Login Request
         const response = await axios.post(`${API_BASE_URL}/auth/login`, {
           email: email.trim(),
           password
@@ -35,7 +34,6 @@ function App() {
         setLoggedInUser(name);
         setSuccessMessage('Login successful!');
       } else {
-        // Register Request
         await axios.post(`${API_BASE_URL}/auth/register`, {
           username: username.trim(),
           email: email.trim(),
@@ -61,16 +59,16 @@ function App() {
     setUsername('');
   };
 
-  // If user is logged in, show a simple dashboard/task view
+  // Logged in dashboard view
   if (userToken) {
     return (
-      <div className="min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center p-4">
-        <div className="bg-slate-800 p-8 rounded-2xl shadow-xl w-full max-w-md text-center border border-slate-700">
-          <h1 className="text-3xl font-bold mb-2">Welcome back, {loggedInUser}! 🎉</h1>
-          <p className="text-slate-400 mb-6">Your task management dashboard is ready.</p>
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-stone-100 flex items-center justify-center p-4">
+        <div className="bg-white p-10 rounded-3xl shadow-xl w-full max-w-lg text-center border border-stone-200">
+          <h1 className="text-3xl font-bold text-stone-800 mb-3">Welcome back, {loggedInUser}! ✨</h1>
+          <p className="text-stone-500 mb-8 text-base">Your task manager dashboard is ready to go.</p>
           <button
             onClick={handleLogout}
-            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-xl transition duration-200 shadow-lg"
+            className="w-full bg-rose-500 hover:bg-rose-600 text-white font-medium py-3 rounded-xl transition duration-200 shadow-md shadow-rose-500/20 text-base"
           >
             Logout
           </button>
@@ -79,105 +77,85 @@ function App() {
     );
   }
 
-  // Login / Register Form
+  // Medium-sized, centered Login / Register form with an attractive warm color scheme
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
-      <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800 p-8 rounded-3xl shadow-2xl w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
+      <div className="bg-white/90 backdrop-blur-xl border border-stone-200/80 p-10 rounded-3xl shadow-2xl w-full max-w-lg">
         
-        {/* Header Tabs */}
-        <div className="flex bg-slate-800/60 p-1.5 rounded-2xl mb-8">
+        {/* App Title */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-extrabold text-indigo-950 tracking-tight">Task Manager</h1>
+          <p className="text-stone-500 text-sm mt-1">Organize your daily workflow seamlessly</p>
+        </div>
+
+        {/* Header Toggle Tabs */}
+        <div className="flex bg-stone-100 p-1.5 rounded-2xl mb-8 border border-stone-200/60">
           <button
             type="button"
             onClick={() => { setIsLogin(true); setError(''); setSuccessMessage(''); }}
-            className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 ${
-              isLogin ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+            className={`flex-1 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${
+              isLogin ? 'bg-indigo-600 text-white shadow-md' : 'text-stone-600 hover:text-indigo-950'
             }`}
           >
-            Login
+            Sign In
           </button>
           <button
             type="button"
             onClick={() => { setIsLogin(false); setError(''); setSuccessMessage(''); }}
-            className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 ${
-              !isLogin ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+            className={`flex-1 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${
+              !isLogin ? 'bg-indigo-600 text-white shadow-md' : 'text-stone-600 hover:text-indigo-950'
             }`}
           >
-            Register
+            Create Account
           </button>
         </div>
 
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-white">
-            {isLogin ? 'Welcome Back' : 'Create Account'}
-          </h2>
-          <p className="text-sm text-slate-400 mt-1">
-            {isLogin ? 'Enter your credentials to access your tasks' : 'Sign up to start organizing your daily goals'}
-          </p>
-        </div>
-
-        {/* Error / Success Messages */}
+        {/* Error / Success Alerts */}
         {error && (
-          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-xl">
+          <div className="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-600 text-sm rounded-xl font-medium">
             {error}
           </div>
         )}
         {successMessage && (
-          <div className="mb-4 p-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm rounded-xl">
+          <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm rounded-xl font-medium">
             {successMessage}
           </div>
         )}
 
-        {/* Form Fields */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Form Inputs */}
+        <form onSubmit={handleSubmit} className="space-y-5">
           {!isLogin && (
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Username</label>
+              <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-2">Username</label>
               <input
                 type="text"
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter your username"
-                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+                placeholder="Enter your name"
+                className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3.5 text-stone-800 placeholder-stone-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 text-sm transition"
               />
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Email Address</label>
+            <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-2">Email Address</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@example.com"
-              className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
+              className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3.5 text-stone-800 placeholder-stone-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 text-sm transition"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Password</label>
+            <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-2">Password</label>
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition duration-200 shadow-lg shadow-indigo-600/30 text-sm mt-2"
-          >
-            {isLogin ? 'Sign In' : 'Create Account'}
-          </button>
-        </form>
-
-      </div>
-    </div>
-  );
-}
-
-export default App;
+              className="w-full bg-stone-50 border border
