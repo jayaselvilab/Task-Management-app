@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';
 
-// Live Render backend URL
 const API_BASE_URL = 'https://task-management-app-bams.onrender.com/api';
 
 function App() {
@@ -63,7 +62,6 @@ function App() {
     setUsername('');
   };
 
-  // Logged in view
   if (userToken) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-stone-100 flex items-center justify-center p-4">
@@ -83,18 +81,15 @@ function App() {
     );
   }
 
-  // Medium-sized, centered Login / Register form
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
       <div className="bg-white/90 backdrop-blur-xl border border-stone-200/80 p-10 rounded-3xl shadow-2xl w-full max-w-lg">
         
-        {/* App Title */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold text-indigo-950 tracking-tight">Task Manager</h1>
           <p className="text-stone-500 text-sm mt-1">Organize your daily workflow seamlessly</p>
         </div>
 
-        {/* Header Toggle Tabs */}
         <div className="flex bg-stone-100 p-1.5 rounded-2xl mb-8 border border-stone-200/60">
           <button
             type="button"
@@ -116,7 +111,6 @@ function App() {
           </button>
         </div>
 
-        {/* Error / Success Alerts */}
         {error && (
           <div className="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-600 text-sm rounded-xl font-medium">
             {error}
@@ -128,46 +122,5 @@ function App() {
           </div>
         )}
 
-        {/* Form Inputs */}
         <form onSubmit={handleSubmit} className="space-y-5">
-          {!isLogin && (
-            <div>
-              <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-2">Username</label>
-              <input
-                type="text"
-                required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter your name"
-                className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3.5 text-stone-800 placeholder-stone-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 text-sm transition"
-              />
-            </div>
-          )}
-
-          <div>
-            <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-2">Email Address</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@example.com"
-              className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3.5 text-stone-800 placeholder-stone-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 text-sm transition"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-2">Password</label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3.5 text-stone-800 placeholder-stone-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 text-sm transition"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold py-3.5
+          {!
