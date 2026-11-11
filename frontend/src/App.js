@@ -123,4 +123,55 @@ function App() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {!
+          {!isLogin && (
+            <div>
+              <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-2">Username</label>
+              <input
+                type="text"
+                required
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter your name"
+                className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3.5 text-stone-800 placeholder-stone-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 text-sm transition"
+              />
+            </div>
+          )}
+
+          <div>
+            <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-2">Email Address</label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="name@example.com"
+              className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3.5 text-stone-800 placeholder-stone-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 text-sm transition"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-stone-600 uppercase tracking-wider mb-2">Password</label>
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className="w-full bg-stone-50 border border-stone-300 rounded-xl px-4 py-3.5 text-stone-800 placeholder-stone-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 text-sm transition"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold py-3.5 rounded-xl transition duration-200 shadow-lg shadow-indigo-600/30 text-base mt-4"
+          >
+            {isLogin ? 'Sign In to Dashboard' : 'Complete Registration'}
+          </button>
+        </form>
+
+      </div>
+    </div>
+  );
+}
+
+export default App;
