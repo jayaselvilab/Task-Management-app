@@ -1,68 +1,413 @@
-/* Custom Styles for your MERN App */
-.app-container {
-  background-color: #f4f7f6;
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* MAIN BACKGROUND */
+
+.auth-page {
   min-height: 100vh;
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: flex-start;
-  padding-top: 50px;
+  padding: 20px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0, 65, 35, 0.85),
+      rgba(0, 120, 65, 0.75)
+    ),
+    url('https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2000&auto=format&fit=crop');
+
+  background-size: cover;
+  background-position: center;
 }
 
-.card {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+/* MAIN CARD */
+
+.auth-card {
   width: 100%;
-  max-width: 400px;
+  max-width: 1035px;
+  min-height: 635px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  overflow: hidden;
+
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 18px;
+
+  background: rgba(0, 0, 0, 0.55);
+
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
 }
+
+/* LEFT WELCOME SECTION */
+
+.welcome-section {
+  display: flex;
+  align-items: center;
+
+  padding: 50px;
+
+  background:
+    linear-gradient(
+      rgba(0, 30, 15, 0.45),
+      rgba(0, 30, 15, 0.65)
+    );
+}
+
+.welcome-content {
+  color: white;
+}
+
+.welcome-content h1 {
+  font-size: 39px;
+  font-weight: 800;
+  margin-bottom: 18px;
+  line-height: 1.3;
+}
+
+.welcome-content p {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.7;
+  color: #d0ded5;
+  max-width: 420px;
+}
+
+/* RIGHT FORM SECTION */
+
+.form-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 60px 35px;
+
+  background: rgba(0, 0, 0, 0.38);
+}
+
+.form-container {
+  width: 100%;
+  max-width: 290px;
+}
+
+.form-container h2 {
+  font-size: 25px;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 25px;
+}
+
+/* INPUT FIELDS */
 
 .input-group {
-  display: flex;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
-input {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px 0 0 4px;
-}
+.input-group input {
+  width: 100%;
 
-.add-btn {
-  background: #28a745;
-  color: white;
+  background: transparent;
+
   border: none;
-  padding: 10px 20px;
-  border-radius: 0 4px 4px 0;
-  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+
+  outline: none;
+
+  padding: 10px 8px;
+
+  color: white;
+  font-family: inherit;
+  font-size: 12px;
+
+  transition: 0.3s;
 }
 
-.task-list {
-  padding: 0;
+.input-group input::placeholder {
+  color: rgba(255, 255, 255, 0.65);
 }
 
-.task-item {
+.input-group input:focus {
+  border-bottom: 1px solid #00c477;
+}
+
+/* LOGIN OPTIONS */
+
+.login-options {
   display: flex;
   justify-content: space-between;
-  padding: 10px;
-  border-bottom: 1px solid #eee;
+  align-items: center;
+
+  color: #c7d3cc;
+  font-size: 10px;
+
+  margin: -5px 0 25px;
 }
 
-.delete-btn {
-  background: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
+.login-options label {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.login-options input {
+  accent-color: #00a85a;
+}
+
+.login-options span {
   cursor: pointer;
 }
 
+/* SUBMIT BUTTON */
 
-.task-count {
-  font-size: 0.9rem;
-  color: #636e72;
-  margin: 15px 0;
+.submit-btn {
+  width: 100%;
+  padding: 13px;
+
+  background: #008b4e;
+  border: none;
+
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+
+  font-family: inherit;
+
+  cursor: pointer;
+
+  margin-top: 5px;
+
+  transition: 0.3s;
+}
+
+.submit-btn:hover {
+  background: #00a85c;
+  box-shadow: 0 5px 20px rgba(0, 180, 100, 0.25);
+}
+
+/* SWITCH LOGIN / REGISTER */
+
+.switch-text {
+  margin-top: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  color: #c7d3cc;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.switch-text button {
+  background: none;
+  border: none;
+
+  color: #00b96b;
+  font-size: 10px;
+  font-weight: 600;
+
+  font-family: inherit;
+  cursor: pointer;
+
+  margin-left: 5px;
+}
+
+.switch-text button:hover {
+  text-decoration: underline;
+}
+
+/* SOCIAL SECTION */
+
+.social-section {
+  width: 75px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 22px;
+
+  margin-left: 25px;
+}
+
+.social-divider {
+  width: 1px;
+  height: 90px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.or-text {
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.social-icons {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.social-icon {
+  width: 33px;
+  height: 33px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  border: none;
+
+  background: white;
+  color: #111;
+
+  font-size: 21px;
+  font-weight: 800;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.social-icon:hover {
+  transform: scale(1.12);
+  background: #00b96b;
+  color: white;
+}
+
+.google-icon {
+  font-size: 20px;
+}
+
+/* MESSAGES */
+
+.message {
+  padding: 10px;
+  margin-bottom: 18px;
+  font-size: 11px;
+  border-radius: 5px;
+}
+
+.error-message {
+  color: #ffbaba;
+  background: rgba(255, 0, 0, 0.15);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+}
+
+.success-message {
+  color: #9dffce;
+  background: rgba(0, 180, 90, 0.15);
+  border: 1px solid rgba(0, 180, 90, 0.3);
+}
+
+/* DASHBOARD */
+
+.dashboard-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  grid-column: 1 / -1;
+  padding: 40px;
+  color: white;
   text-align: center;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
+}
+
+.dashboard-card h1 {
+  margin-bottom: 15px;
+}
+
+.dashboard-card p {
+  margin-bottom: 25px;
+}
+
+/* RESPONSIVE DESIGN */
+
+@media (max-width: 850px) {
+
+  .auth-card {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+  }
+
+  .welcome-section {
+    min-height: 220px;
+    padding: 35px;
+  }
+
+  .welcome-content h1 {
+    font-size: 30px;
+  }
+
+  .form-section {
+    padding: 40px 25px;
+  }
+
+  .social-section {
+    margin-left: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .auth-page {
+    padding: 12px;
+  }
+
+  .auth-card {
+    border-radius: 12px;
+  }
+
+  .welcome-section {
+    min-height: 180px;
+    padding: 25px;
+  }
+
+  .welcome-content h1 {
+    font-size: 25px;
+  }
+
+  .welcome-content p {
+    font-size: 11px;
+  }
+
+  .form-section {
+    padding: 35px 15px;
+  }
+
+  .form-container {
+    max-width: 250px;
+  }
+
+  .social-section {
+    width: 45px;
+    margin-left: 8px;
+  }
+
+  .social-icons {
+    gap: 18px;
+  }
+
+  .social-icon {
+    width: 28px;
+    height: 28px;
+  }
 }
