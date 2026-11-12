@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
@@ -14,24 +14,34 @@ function App() {
   const [userToken, setUserToken] = useState(localStorage.getItem('token') || '');
   const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem('username') || '');
 
-  const fetchDashboardData = useCallback(async () => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.get(`${API_BASE_URL}/tasks`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-    } catch (err) {
-      if (err.response?.status === 401) {
-        handleLogout();
-      }
-    }
-  }, []);
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    setUserToken('');
+    setLoggedInUser('');
+    setEmail('');
+    setPassword('');
+    setUsername('');
+  };
 
   useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        await axios.get(`${API_BASE_URL}/tasks`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } catch (err) {
+        if (err.response?.status === 401) {
+          handleLogout();
+        }
+      }
+    };
+
     if (userToken) {
       fetchDashboardData();
     }
-  }, [userToken, fetchDashboardData]);
+  }, [userToken]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,16 +79,6 @@ function App() {
         'Authentication failed. Please check your credentials.'
       );
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-    setUserToken('');
-    setLoggedInUser('');
-    setEmail('');
-    setPassword('');
-    setUsername('');
   };
 
   if (userToken) {
