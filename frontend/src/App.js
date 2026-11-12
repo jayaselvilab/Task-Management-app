@@ -14,6 +14,9 @@ function App() {
   const [successMessage, setSuccessMessage] = useState('');
   const [userToken, setUserToken] = useState(localStorage.getItem('token') || '');
   const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem('username') || '');
+  const [tasks, setTasks] = useState([]);
+  const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [newTaskDesc, setNewTaskDesc] = useState('');
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -23,6 +26,37 @@ function App() {
     setEmail('');
     setPassword('');
     setUsername('');
+  };
+  const handleCreateTask = async (e) => {
+    e.preventDefault();
+    if (!newTaskTitle.trim()) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        `${API_BASE_URL}/tasks`,
+        { title: newTaskTitle, description: newTaskDesc },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setTasks(response.data);
+      setTasks([...tasks, response.data]);
+      setNewTaskTitle('');
+      setNewTaskDesc('');
+    } catch (err) {
+      setError('Failed to create task');
+    }
+  };
+
+  const handleDeleteTask = async (taskId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`${API_BASE_URL}/tasks/${taskId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setTasks(tasks.filter(task => task._id !== taskId && task.id !== taskId));
+    } catch (err) {
+      setError('Failed to delete task');
+    }
   };
 
   useEffect(() => {
@@ -84,25 +118,65 @@ function App() {
 
   // Existing welcome card after login
 
-  if (userToken) {
+ 
+if (userToken) {
     return (
-      <div className="dashboard-welcome">
-
-        <div className="dashboard-welcome-card">
+      <div className="dashboard-welcome" style={{ flexDirection: 'column', padding: '40px 20px', alignItems: 'center', overflowY: 'auto' }}>
+        <div className="dashboard-welcome-card" style={{ maxWidth: '600px', width: '100%', marginBottom: '20px' }}>
           <h1>Welcome back, {loggedInUser}!</h1>
-
-          <p>
-            Your task manager dashboard is ready.
-          </p>
-
-          <button
-            onClick={handleLogout}
-            className="dashboard-logout"
-          >
+          <p>Manage your tasks below.</p>
+          <button onClick={handleLogout} className="dashboard-logout">
             Sign Out
           </button>
         </div>
 
+        <div className="dashboard-welcome-card" style={{ maxWidth: '600px', width: '100%', textAlign: 'left' }}>
+          <h2 style={{ fontSize: '18px', marginBottom: '15px' }}>Your Tasks</h2>
+          
+          <form onSubmit={handleCreateTask} style={{ marginBottom: '20px' }}>
+            <div className="form-group" style={{ marginBottom: '12px' }}>
+              <label>Task Title</label>
+              <input
+                type="text"
+                required
+                value={newTaskTitle}
+                onChange={(e) => setNewTaskTitle(e.target.value)}
+                placeholder="What needs to be done?"
+              />
+            </div>
+            <div className="form-group" style={{ marginBottom: '12px' }}>
+              <label>Description</label>
+              <input
+                type="text"
+                value={newTaskDesc}
+                onChange={(e) => setNewTaskDesc(e.target.value)}
+                placeholder="Add details"
+              />
+            </div>
+            <button type="submit" className="login-button">Add Task</button>
+          </form>
+
+          <div style={{ maxHeight: '220px', overflowY: 'auto' }}>
+            {tasks.length === 0 ? (
+              <p style={{ color: '#b8c9bd', fontSize: '11px', textAlign: 'center' }}>No tasks found. Create your first task above!</p>
+            ) : (
+              tasks.map((task) => (
+                <div key={task._id || task.id} style={{ background: 'rgba(0,0,0,0.3)', padding: '10px 12px', borderRadius: '6px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <div>
+                    <h4 style={{ fontSize: '13px', color: '#fff' }}>{task.title}</h4>
+                    <p style={{ fontSize: '10px', color: '#b8c9bd', margin: '2px 0 0' }}>{task.description}</p>
+                  </div>
+                  <button 
+                    onClick={() => handleDeleteTask(task._id || task.id)}
+                    style={{ background: '#d9534f', border: 'none', color: '#fff', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '10px' }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </div>
     );
   }
