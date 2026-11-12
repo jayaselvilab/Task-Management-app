@@ -38,8 +38,7 @@ function App() {
         { title: newTaskTitle, description: newTaskDesc },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setTasks(response.data);
-      setTasks([...tasks, response.data]);
+      setTasks([...tasks, response.data]); // Keep only this line
       setNewTaskTitle('');
       setNewTaskDesc('');
     } catch (err) {
