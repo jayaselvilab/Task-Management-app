@@ -14,7 +14,6 @@ function App() {
   const [userToken, setUserToken] = useState(localStorage.getItem('token') || '');
   const [loggedInUser, setLoggedInUser] = useState(localStorage.getItem('username') || '');
 
-  // Wrap fetchDashboardData in useCallback to satisfy ESLint dependencies
   const fetchDashboardData = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
@@ -82,12 +81,11 @@ function App() {
     setUsername('');
   };
 
-  // Logged-in dashboard view
   if (userToken) {
     return (
       <div 
         className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center relative"
-        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2000&auto=format&fit=crop')` }}
+        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2000&auto=format&fit=crop')` }}
       >
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
         <div className="bg-black/40 backdrop-blur-md border border-white/20 p-10 rounded-2xl shadow-2xl w-full max-w-md text-center text-white relative z-10">
@@ -95,7 +93,7 @@ function App() {
           <p className="text-gray-300 mb-8 text-sm">Your task manager dashboard is ready.</p>
           <button
             onClick={handleLogout}
-            className="w-full bg-white text-slate-900 font-semibold py-3 rounded-xl hover:bg-gray-100 transition shadow-lg text-sm"
+            className="w-full bg-black text-white font-semibold py-3 rounded-xl hover:bg-neutral-900 transition shadow-lg text-sm"
           >
             Sign Out
           </button>
@@ -107,15 +105,21 @@ function App() {
   return (
     <div 
       className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center relative"
-      style={{ backgroundImage: `url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2000&auto=format&fit=crop')` }}
+      style={{ backgroundImage: `url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2000&auto=format&fit=crop')` }}
     >
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"></div>
 
-      <div className="bg-black/35 backdrop-blur-md border border-white/20 p-8 sm:p-10 rounded-2xl shadow-2xl w-full max-w-md text-white relative z-10">
+      {/* Glassmorphic Card Container */}
+      <div className="bg-[#111c16]/75 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl w-full max-w-md p-8 sm:p-10 text-white relative z-10">
         
-        <h2 className="text-3xl font-semibold text-center mb-8 tracking-wide">
-          {isLogin ? 'Login' : 'Create Account'}
-        </h2>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold tracking-tight">
+            {isLogin ? 'Welcome' : 'Create Account'}
+          </h1>
+          <p className="text-gray-400 text-xs mt-1">
+            {isLogin ? 'Please enter your details to sign in' : 'Set up your account to get started'}
+          </p>
+        </div>
 
         {error && (
           <div className="mb-4 p-3 bg-red-500/20 border border-red-500/40 text-red-200 text-xs rounded-lg">
@@ -128,46 +132,49 @@ function App() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {!isLogin && (
             <div>
+              <label className="block text-xs font-semibold text-gray-300 mb-1.5">Username</label>
               <input
                 type="text"
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter your username"
-                className="w-full bg-transparent border-b border-white/40 pb-2 text-white placeholder-white/60 focus:outline-none focus:border-white text-sm transition"
+                className="w-full bg-transparent border-b border-white/30 pb-2 text-white placeholder-gray-500 focus:outline-none focus:border-white text-sm transition"
               />
             </div>
           )}
 
           <div>
+            <label className="block text-xs font-semibold text-gray-300 mb-1.5">E-mail</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              className="w-full bg-transparent border-b border-white/40 pb-2 text-white placeholder-white/60 focus:outline-none focus:border-white text-sm transition"
+              placeholder="Enter your e-mail"
+              className="w-full bg-transparent border-b border-white/30 pb-2 text-white placeholder-gray-500 focus:outline-none focus:border-white text-sm transition"
             />
           </div>
 
           <div>
+            <label className="block text-xs font-semibold text-gray-300 mb-1.5">Password</label>
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              className="w-full bg-transparent border-b border-white/40 pb-2 text-white placeholder-white/60 focus:outline-none focus:border-white text-sm transition"
+              placeholder="••••••••"
+              className="w-full bg-transparent border-b border-white/30 pb-2 text-white placeholder-gray-500 focus:outline-none focus:border-white text-sm transition"
             />
           </div>
 
           {isLogin && (
-            <div className="flex items-center justify-between text-xs text-gray-300 pt-1">
+            <div className="flex items-center justify-between text-xs text-gray-400 pt-1">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" className="rounded bg-transparent border-white/40 text-indigo-600 focus:ring-0" />
+                <input type="checkbox" className="rounded bg-transparent border-white/30 text-emerald-600 focus:ring-0" />
                 <span>Remember me</span>
               </label>
               <span className="hover:underline cursor-pointer">Forgot password?</span>
@@ -176,19 +183,19 @@ function App() {
 
           <button
             type="submit"
-            className="w-full bg-white text-slate-900 font-semibold py-3 rounded-lg hover:bg-gray-100 transition shadow-lg text-sm mt-2"
+            className="w-full bg-black hover:bg-neutral-900 text-white font-semibold py-3.5 rounded-xl transition shadow-xl text-sm mt-4 border border-white/10"
           >
-            {isLogin ? 'Log In' : 'Register'}
+            {isLogin ? 'Log in' : 'Register'}
           </button>
         </form>
 
-        <div className="text-center mt-6 text-xs text-gray-300">
+        <div className="text-center mt-6 text-xs text-gray-400">
           {isLogin ? (
             <p>
               Don't have an account?{' '}
               <button 
                 onClick={() => { setIsLogin(false); setError(''); setSuccessMessage(''); }} 
-                className="text-white font-medium hover:underline focus:outline-none"
+                className="text-white font-semibold hover:underline focus:outline-none ml-1"
               >
                 Register
               </button>
@@ -198,9 +205,9 @@ function App() {
               Already have an account?{' '}
               <button 
                 onClick={() => { setIsLogin(true); setError(''); setSuccessMessage(''); }} 
-                className="text-white font-medium hover:underline focus:outline-none"
+                className="text-white font-semibold hover:underline focus:outline-none ml-1"
               >
-                Login
+                Log in
               </button>
             </p>
           )}
