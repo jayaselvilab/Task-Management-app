@@ -58,19 +58,29 @@ function App() {
     }
   };
 
+
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         const token = localStorage.getItem('token');
-        await axios.get(`${API_BASE_URL}/tasks`, {
+        const response = await axios.get(`${API_BASE_URL}/tasks`, {
           headers: { Authorization: `Bearer ${token}` }
         });
+        setTasks(response.data); // <-- Added this so tasks actually load into state!
       } catch (err) {
         if (err.response?.status === 401) {
           handleLogout();
         }
       }
     };
+
+    if (userToken) {
+      fetchDashboardData();
+    }
+  }, [userToken]);
+
+ 
 
     if (userToken) {
       fetchDashboardData();
