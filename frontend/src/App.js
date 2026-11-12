@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
@@ -54,7 +55,7 @@ function App() {
           email: email.trim(),
           password
         });
-        
+
         const { token, username: name } = response.data;
         localStorage.setItem('token', token);
         localStorage.setItem('username', name || email.split('@')[0]);
@@ -67,153 +68,198 @@ function App() {
           email: email.trim(),
           password
         });
-        
+
         setSuccessMessage('Registration successful! Please sign in.');
         setIsLogin(true);
         setPassword('');
       }
     } catch (err) {
       setError(
-        err.response?.data?.error || 
-        err.response?.data?.message || 
+        err.response?.data?.error ||
+        err.response?.data?.message ||
         'Authentication failed. Please check your credentials.'
       );
     }
   };
 
+  // Existing welcome card after login
+
   if (userToken) {
     return (
-      <div 
-        className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center relative"
-        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2000&auto=format&fit=crop')` }}
-      >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
-        <div className="bg-black/40 backdrop-blur-md border border-white/20 p-10 rounded-2xl shadow-2xl w-full max-w-md text-center text-white relative z-10">
-          <h1 className="text-3xl font-bold mb-3">Welcome back, {loggedInUser}!</h1>
-          <p className="text-gray-300 mb-8 text-sm">Your task manager dashboard is ready.</p>
+      <div className="dashboard-welcome">
+
+        <div className="dashboard-welcome-card">
+          <h1>Welcome back, {loggedInUser}!</h1>
+
+          <p>
+            Your task manager dashboard is ready.
+          </p>
+
           <button
             onClick={handleLogout}
-            className="w-full bg-black text-white font-semibold py-3 rounded-xl hover:bg-neutral-900 transition shadow-lg text-sm"
+            className="dashboard-logout"
           >
             Sign Out
           </button>
         </div>
+
       </div>
     );
   }
 
-  return (
-    <div 
-      className="min-h-screen flex items-center justify-center p-4 bg-cover bg-center relative"
-      style={{ backgroundImage: `url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2000&auto=format&fit=crop')` }}
-    >
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"></div>
+  // Login / Registration page
 
-      {/* Glassmorphic Card Container */}
-      <div className="bg-[#111c16]/75 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl w-full max-w-md p-8 sm:p-10 text-white relative z-10">
-        
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">
-            {isLogin ? 'Welcome' : 'Create Account'}
-          </h1>
-          <p className="text-gray-400 text-xs mt-1">
-            {isLogin ? 'Please enter your details to sign in' : 'Set up your account to get started'}
-          </p>
+  return (
+    <div className="auth-page">
+
+      <div className="auth-container">
+
+        {/* LEFT SIDE - LEAF IMAGE */}
+
+        <div className="auth-image-section">
+          <div className="image-overlay"></div>
         </div>
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-500/20 border border-red-500/40 text-red-200 text-xs rounded-lg">
-            {error}
-          </div>
-        )}
-        {successMessage && (
-          <div className="mb-4 p-3 bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 text-xs rounded-lg">
-            {successMessage}
-          </div>
-        )}
+        {/* RIGHT SIDE - LOGIN FORM */}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {!isLogin && (
-            <div>
-              <label className="block text-xs font-semibold text-gray-300 mb-1.5">Username</label>
-              <input
-                type="text"
-                required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter your username"
-                className="w-full bg-transparent border-b border-white/30 pb-2 text-white placeholder-gray-500 focus:outline-none focus:border-white text-sm transition"
-              />
+        <div className="auth-form-section">
+
+          <div className="form-content">
+
+            <div className="form-heading">
+              <h1>
+                {isLogin ? 'Welcome' : 'Create Account'}
+              </h1>
+
+              <p>
+                {isLogin
+                  ? 'Please enter your details to sign in'
+                  : 'Please enter your details to register'}
+              </p>
             </div>
-          )}
 
-          <div>
-            <label className="block text-xs font-semibold text-gray-300 mb-1.5">E-mail</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your e-mail"
-              className="w-full bg-transparent border-b border-white/30 pb-2 text-white placeholder-gray-500 focus:outline-none focus:border-white text-sm transition"
-            />
-          </div>
+            {/* ERROR MESSAGE */}
 
-          <div>
-            <label className="block text-xs font-semibold text-gray-300 mb-1.5">Password</label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full bg-transparent border-b border-white/30 pb-2 text-white placeholder-gray-500 focus:outline-none focus:border-white text-sm transition"
-            />
-          </div>
+            {error && (
+              <div className="message error-message">
+                {error}
+              </div>
+            )}
 
-          {isLogin && (
-            <div className="flex items-center justify-between text-xs text-gray-400 pt-1">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" className="rounded bg-transparent border-white/30 text-emerald-600 focus:ring-0" />
-                <span>Remember me</span>
-              </label>
-              <span className="hover:underline cursor-pointer">Forgot password?</span>
+            {/* SUCCESS MESSAGE */}
+
+            {successMessage && (
+              <div className="message success-message">
+                {successMessage}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit}>
+
+              {!isLogin && (
+                <div className="form-group">
+                  <label>Username</label>
+
+                  <input
+                    type="text"
+                    required
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Enter your username"
+                  />
+                </div>
+              )}
+
+              <div className="form-group">
+                <label>E-mail</label>
+
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your e-mail"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Password</label>
+
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                />
+              </div>
+
+              {/* REMEMBER ME */}
+
+              {isLogin && (
+                <div className="remember-row">
+                  <label className="remember-label">
+                    <input
+                      type="checkbox"
+                    />
+                    <span>Remember me</span>
+                  </label>
+                </div>
+              )}
+
+              {/* LOGIN BUTTON */}
+
+              <button
+                type="submit"
+                className="login-button"
+              >
+                {isLogin ? 'Log in' : 'Register'}
+              </button>
+
+            </form>
+
+            {/* REGISTER / LOGIN SWITCH */}
+
+            <div className="register-text">
+
+              {isLogin ? (
+                <p>
+                  Don't have an account?
+
+                  <button
+                    onClick={() => {
+                      setIsLogin(false);
+                      setError('');
+                      setSuccessMessage('');
+                    }}
+                  >
+                    Register
+                  </button>
+                </p>
+              ) : (
+                <p>
+                  Already have an account?
+
+                  <button
+                    onClick={() => {
+                      setIsLogin(true);
+                      setError('');
+                      setSuccessMessage('');
+                    }}
+                  >
+                    Log in
+                  </button>
+                </p>
+              )}
+
             </div>
-          )}
 
-          <button
-            type="submit"
-            className="w-full bg-black hover:bg-neutral-900 text-white font-semibold py-3.5 rounded-xl transition shadow-xl text-sm mt-4 border border-white/10"
-          >
-            {isLogin ? 'Log in' : 'Register'}
-          </button>
-        </form>
+          </div>
 
-        <div className="text-center mt-6 text-xs text-gray-400">
-          {isLogin ? (
-            <p>
-              Don't have an account?{' '}
-              <button 
-                onClick={() => { setIsLogin(false); setError(''); setSuccessMessage(''); }} 
-                className="text-white font-semibold hover:underline focus:outline-none ml-1"
-              >
-                Register
-              </button>
-            </p>
-          ) : (
-            <p>
-              Already have an account?{' '}
-              <button 
-                onClick={() => { setIsLogin(true); setError(''); setSuccessMessage(''); }} 
-                className="text-white font-semibold hover:underline focus:outline-none ml-1"
-              >
-                Log in
-              </button>
-            </p>
-          )}
         </div>
 
       </div>
+
     </div>
   );
 }
